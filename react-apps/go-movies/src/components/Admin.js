@@ -9,6 +9,12 @@ export default class Admin extends Component {
     }
 
     componentDidMount() {
+        if (this.props.jwt === "") {
+          this.props.history.push({
+            pathname: "/login",
+          });
+          return;
+        }
         fetch("http://localhost:4000/v1/movies")
           .then((response) => {
             if (response.status !== "200") {
@@ -49,7 +55,7 @@ export default class Admin extends Component {
                         <Link
                             key={m.id}
                             className="list-group-item list-group-item-action"
-                            to={{pathname: `/movies/${m.id}`}}
+                            to={`/admin/movie/${m.id}`}
                         >
                             {m.title}
                         </Link>

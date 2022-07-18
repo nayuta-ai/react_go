@@ -13,19 +13,8 @@ import (
 )
 
 type jsonResp struct {
-	OK      bool   `json: "OK"`
+	OK      bool   `json:"ok"`
 	Message string `json:"message"`
-}
-
-type MoviePayload struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Year        string `json:"year"`
-	ReleaseDate string `json:"release_date"`
-	Runtime     string `json:"runtime"`
-	Rating      string `json:"rating"`
-	MPAARating  string `json:"mpaa_rating"`
 }
 
 func (app *application) getOneMovie(w http.ResponseWriter, r *http.Request) {
@@ -39,10 +28,6 @@ func (app *application) getOneMovie(w http.ResponseWriter, r *http.Request) {
 	}
 
 	movie, err := app.models.DB.Get(id)
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
 
 	err = app.writeJSON(w, http.StatusOK, movie, "movie")
 	if err != nil {
@@ -110,6 +95,7 @@ func (app *application) deleteMovie(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, err)
 		return
 	}
+
 	err = app.models.DB.DeleteMovie(id)
 	if err != nil {
 		app.errorJSON(w, err)
@@ -119,6 +105,7 @@ func (app *application) deleteMovie(w http.ResponseWriter, r *http.Request) {
 	ok := jsonResp{
 		OK: true,
 	}
+
 	err = app.writeJSON(w, http.StatusOK, ok, "response")
 	if err != nil {
 		app.errorJSON(w, err)
@@ -130,7 +117,18 @@ func (app *application) insertMovie(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (app *application) editmovie(w http.ResponseWriter, r *http.Request) {
+type MoviePayload struct {
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Year        string `json:"year"`
+	ReleaseDate string `json:"release_date"`
+	Runtime     string `json:"runtime"`
+	Rating      string `json:"rating"`
+	MPAARating  string `json:"mpaa_rating"`
+}
+
+func (app *application) editMovie(w http.ResponseWriter, r *http.Request) {
 	var payload MoviePayload
 
 	err := json.NewDecoder(r.Body).Decode(&payload)
@@ -173,12 +171,12 @@ func (app *application) editmovie(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
 	ok := jsonResp{
 		OK: true,
 	}
 
 	err = app.writeJSON(w, http.StatusOK, ok, "response")
-
 	if err != nil {
 		app.errorJSON(w, err)
 		return
